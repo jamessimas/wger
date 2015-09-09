@@ -15,10 +15,11 @@ django_compressor
 icalendar
 django-bootstrap-breadcrumbs
 sphinx
-django-sortedm2m
+django-sortedm2m 
+django-bower
 
 # REST API
-djangorestframework==2.3.13
+djangorestframework>=3.2,<3.3
 django-filter
 django-tastypie
 django-cors-headers

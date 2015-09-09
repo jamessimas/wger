@@ -32,9 +32,10 @@ state.
 
 ::
 
- $ sudo apt-get install python-dev python-virtualenv
+ $ sudo apt-get install python-dev python-virtualenv nodejs
  $ virtualenv venv-django
  $ source venv-django/bin/activate
+ $ npm install bower
 
 2) Start the application. This will create a SQlite database and populate it
    with data on the first run.
@@ -44,6 +45,7 @@ state.
  $ git clone https://github.com/rolandgeider/wger.git
  $ cd wger
  $ pip install -r requirements.txt  # or requirements_devel.txt to develop
+ $ python manage.py bower install
  $ python start.py
 
  # After the first run you can just use django's development server
@@ -96,6 +98,7 @@ The available options for the ``wger`` command (if installed from PyPI) or
   -s SETTINGS, --settings=SETTINGS
                         Path to the wger configuration file.
   --no-reload           Do not reload the development server.
+  --no-browser          Do not open the application in a browser.
   --version             Show version and exit.
   --show-config         Show configuration paths and exit.
 
@@ -118,8 +121,8 @@ Sources
 
 All the code and the content is freely available:
 
-* **Main repository:** GIT, https://github.com/rolandgeider/wger
-* **Mirror:** HG, https://bitbucket.org/rolandgeider/wger
+* **Main repository:** https://github.com/rolandgeider/wger
+* **Mirror:** https://bitbucket.org/rolandgeider/wger
 
 
 Licence

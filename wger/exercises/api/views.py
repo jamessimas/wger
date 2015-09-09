@@ -18,7 +18,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from rest_framework.decorators import link
+from rest_framework.decorators import detail_route
 from rest_framework.decorators import api_view
 
 from easy_thumbnails.alias import aliases
@@ -27,6 +27,9 @@ from easy_thumbnails.files import get_thumbnailer
 from django.utils.translation import ugettext as _
 
 from wger.config.models import LanguageConfig
+from wger.exercises.api.serializers import MuscleSerializer, ExerciseSerializer, \
+    ExerciseImageSerializer, ExerciseCategorySerializer, EquipmentSerializer, \
+    ExerciseCommentSerializer
 from wger.exercises.models import Exercise
 from wger.exercises.models import Equipment
 from wger.exercises.models import ExerciseCategory
@@ -42,7 +45,8 @@ class ExerciseViewSet(viewsets.ModelViewSet):
     '''
     API endpoint for exercise objects
     '''
-    model = Exercise
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, CreateOnlyPermission)
     ordering_fields = '__all__'
     filter_fields = ('category',
@@ -57,12 +61,15 @@ class ExerciseViewSet(viewsets.ModelViewSet):
                      'license',
                      'license_author')
 
-    def pre_save(self, obj):
+    def perform_create(self, serializer):
         '''
-        Set language, author and status
+        Set author and status
         '''
-        obj.language = load_language()
+        language = load_language()
+        obj = serializer.save(language=language)
+        # Todo is it right to call set author after save?
         obj.set_author(self.request)
+        obj.save()
 
 
 @api_view(['GET'])
@@ -110,7 +117,8 @@ class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
     '''
     API endpoint for equipment objects
     '''
-    model = Equipment
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
     ordering_fields = '__all__'
     filter_fields = ('name',)
 
@@ -119,7 +127,8 @@ class ExerciseCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     '''
     API endpoint for exercise categories objects
     '''
-    model = ExerciseCategory
+    queryset = ExerciseCategory.objects.all()
+    serializer_class = ExerciseCategorySerializer
     ordering_fields = '__all__'
     filter_fields = ('name',)
 
@@ -128,7 +137,8 @@ class ExerciseImageViewSet(viewsets.ModelViewSet):
     '''
     API endpoint for exercise image objects
     '''
-    model = ExerciseImage
+    queryset = ExerciseImage.objects.all()
+    serializer_class = ExerciseImageSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, CreateOnlyPermission)
     ordering_fields = '__all__'
     filter_fields = ('is_main',
@@ -137,7 +147,7 @@ class ExerciseImageViewSet(viewsets.ModelViewSet):
                      'license',
                      'license_author')
 
-    @link()
+    @detail_route()
     def thumbnails(self, request, pk):
         '''
         Return a list of the image's thumbnails
@@ -151,18 +161,22 @@ class ExerciseImageViewSet(viewsets.ModelViewSet):
         thumbnails['original'] = image.image.url
         return Response(thumbnails)
 
-    def pre_save(self, obj):
+    def perform_create(self, serializer):
         '''
         Set the license data
         '''
+        obj = serializer.save()
+        # Todo is it right to call set author after save?
         obj.set_author(self.request)
+        obj.save()
 
 
 class ExerciseCommentViewSet(viewsets.ReadOnlyModelViewSet):
     '''
     API endpoint for exercise comment objects
     '''
-    model = ExerciseComment
+    queryset = ExerciseComment.objects.all()
+    serializer_class = ExerciseCommentSerializer
     ordering_fields = '__all__'
     filter_fields = ('comment',
                      'exercise')
@@ -172,7 +186,8 @@ class MuscleViewSet(viewsets.ReadOnlyModelViewSet):
     '''
     API endpoint for muscle objects
     '''
-    model = Muscle
+    queryset = Muscle.objects.all()
+    serializer_class = MuscleSerializer
     ordering_fields = '__all__'
     filter_fields = ('name',
                      'is_front')

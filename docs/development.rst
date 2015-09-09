@@ -5,11 +5,11 @@ Development
 
 First, install all required packages::
 
-  $ sudo apt-get install python-virtualenv
-  $ sudo apt-get install python-dev
+  $ sudo apt-get install python-virtualenv python-dev nodejs
   $ virtualenv python-django
   $ source python-django/bin/activate
   $ pip install -r requirements_devel.txt
+  $ npm install bower
 
 .. note::
    For python3 some packages have slightly different names such as ``python3-dev``
@@ -20,6 +20,7 @@ and populate it with data on the first run::
 
   $ git clone https://github.com/rolandgeider/wger.git
   $ cd wger
+  $ python manage.py bower install
   $ python start.py
 
 That's it. You can log in with the default administator user:
@@ -64,6 +65,26 @@ settings.py):
    Use the console backend, all sent emails will be printed to it::
 
        EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+Selectively running tests
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you do a ``python manage.py test`` you will run the complete testsuite, and
+this can take a while. You can control which tests will be executed like this.
+
+Test only the tests in the 'core' app::
+
+  python manage.py test wger.core
+
+Test only the tests in the 'test_user.py` file in the core app::
+
+  python manage.py test wger.core.tests.test_user
+
+Test only the tests in 'StatusUserTestCase' in the file 'test_user.py` file in
+the core app::
+
+  python manage.py test wger.core.tests.test_user.StatusUserTestCase
 
 
 Using runserver_plus
