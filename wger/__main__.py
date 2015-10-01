@@ -14,34 +14,23 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 
+import sys
+from invoke import run
 
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
-
-from wger.gym.models import (
-    Gym,
-    GymConfig,
-    UserDocument
-)
-
-
-@receiver(post_save, sender=Gym)
-def gym_config(sender, instance, created, **kwargs):
-    '''
-    Creates a configuration entry for newly added gyms
-    '''
-    if not created or kwargs['raw']:
-        return
-
-    config = GymConfig()
-    config.gym = instance
-    config.save()
+'''
+This simple wrapper script is used as a console entry point in the packaged
+version of the application. It simply redirects all arguments to the invoke
+command, which does all the work.
+'''
 
 
-@receiver(post_delete, sender=UserDocument)
-def delete_user_document_on_delete(sender, instance, **kwargs):
-    '''
-    Deletes the document from the disk as well
-    '''
+def main():
+    args = sys.argv[1:]
+    if len(args):
+        run('invoke ' + ' '.join(args), pty=True)
+    else:
+        run('invoke --list')
 
-    instance.document.delete(save=False)
+
+if __name__ == '__main__':
+    main()

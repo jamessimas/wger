@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 
 import re
-from wger.main import fs2unicode
+import sys
 
 '''
 This file contains the global settings that don't usually need to be changed.
@@ -94,7 +94,6 @@ INSTALLED_APPS = (
 BOWER_INSTALLED_APPS = (
     'jquery',
     'bootstrap',
-    'bootstrap-datepicker',
     'd3',
     'shariff',
     'tinymce-dist',
@@ -213,7 +212,7 @@ LANGUAGE_CODE = 'en'
 
 # All translation files are in one place
 LOCALE_PATHS = (
-    fs2unicode(os.path.join(SITE_ROOT, 'locale')),
+    os.path.join(SITE_ROOT, 'locale'),
 )
 
 FLAVOURS_STORAGE_BACKEND = 'session'
@@ -300,7 +299,10 @@ COMPRESS_ROOT = STATIC_ROOT
 
 # BOWER components route
 BOWER_COMPONENTS_ROUTE = os.path.join(STATIC_ROOT, 'components')
-BOWER_PATH = os.path.join(BASE_DIR, 'node_modules', '.bin', 'bower')
+if sys.platform.startswith('win32'):
+    BOWER_PATH = os.path.join(BASE_DIR, 'node_modules', '.bin', 'bower.cmd')
+else:
+    BOWER_PATH = os.path.join(BASE_DIR, 'node_modules', '.bin', 'bower')
 
 #
 # Django Rest Framework
